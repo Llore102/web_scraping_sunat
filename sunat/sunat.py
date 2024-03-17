@@ -3,7 +3,6 @@ import pandas as pd
 import time
 import os
 import time
-from selenium.webdriver.common.keys import Keys
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
@@ -18,13 +17,11 @@ from selenium.webdriver.chrome.service import Service
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)Chrome/80.0.3987.149 Safari/537.36"}
 
 class Sunat_scraper:
-    
     def __init__(self, ruc_list, direct):
         self.direct = direct
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument(f"user-agent={headers['User-Agent']}")
         # chrome_options.add_argument("--headless")  # Opcional: para ejecución en segundo plano
-
         # Instanciar el controlador de Chrome y pasar las opciones como argumento
         selenium_service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=selenium_service, options=chrome_options)
@@ -38,19 +35,19 @@ class Sunat_scraper:
             self.scrape_info(ruc)
 
         # Convertir el diccionario en un DataFrame de pandas
-        df = pd.DataFrame(self.data, columns=['Nombres', 'Fecha de Inscripción', 'Fecha de Inicio de Actividades', 
+        df = pd.DataFrame(self.data, columns=['Ruc', 'Nombres','Fecha de Inscripción', 'Fecha de Inicio de Actividades', 
                                               'Estado del Contribuyente', 'Condición del Contribuyente',  'Domicilio Fiscal',
                                                'Actividad Comercio Exterior', 'Actividad(es) Económica(s)', 'Emisor electrónico desde',
                                                'Afiliado al PLE desde', 'Padrones'])
         
         # Guardar el DataFrame en un archivo de Excel
-        excel_file = os.path.join(self.direct, 'sunat_info_p.xlsx')
+        excel_file = os.path.join(self.direct, 'sunat_info.xlsx')
         df.to_excel(excel_file, index=False, index_label=False)
         print("Información exportada a", excel_file)
 
         if self.excepciones:
             excepciones_df = pd.DataFrame(self.excepciones, columns=['RUC'])
-            excepciones_excel_file = os.path.join(self.direct, 'ruc_excepciones_p.xlsx')
+            excepciones_excel_file = os.path.join(self.direct, 'ruc_excepciones.xlsx')
             excepciones_df.to_excel(excepciones_excel_file, index=False)
             print("Lista de RUCs con excepciones guardada en", excepciones_excel_file) 
 
@@ -59,21 +56,25 @@ class Sunat_scraper:
         print('Entrando al RUC', ruc)
         # self.driver.get("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/FrameCriterioBusquedaWeb.jsp")
         try:
-            self.driver.get("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/FrameCriterioBusquedaWeb.jsp")
+            self.driver.get("https://e-consultaruc.sunat.gob.pe/cl-ti-itmrconsruc/FrameCriterioBusquedaWeb.jsp") ## web del scraper
         except WebDriverException as e:
             print("Se produjo un error de conexión:", str(e))
             self.restart_driver()
             return
         
-        self.driver.find_element(By.XPATH, '//*[@id="txtRuc"]').send_keys(ruc)
+        self.driver.find_element(By.XPATH, '//*[@id="txtRuc"]').send_keys(ruc) 
         self.driver.find_element(By.XPATH, '//*[@id="btnAceptar"]').click()
 
         
         try:
             WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, '/html/body/div[1]/div[2]/div/div[3]/div[2]')))
+
             # Encontrar el elemento que contiene la información que deseas
             nombre_element = self.driver.find_element(By.XPATH, '/html/body/div[1]/div[2]/div/div[3]/div[2]/div[1]/div/div[2]/h4')
             nombre = nombre_element.text.strip()
+
+
+
 
             fecha_inscripcion_elemnt = self.driver.find_element(By.XPATH, '/html/body/div[1]/div[2]/div/div[3]/div[2]/div[4]/div/div[2]/p')
             fecha_in = fecha_inscripcion_elemnt.text.strip()
@@ -109,7 +110,7 @@ class Sunat_scraper:
             # print('Información obtenida para el RUC', ruc, ':', nombre, ':', fecha_in, ':', fecha_in_act, ':',  estado_contri, ':', condicion_contri, ':', domicilio_fical, )
             print('Información obtenida para el RUC',  nombre,  )
             # Agregar la información al diccionario
-            self.data.append((nombre, fecha_in, fecha_in_act, estado_contri, condicion_contri, domicilio_fical, actividad_c_ex_fical, actividades_econ, emisor, afiliado, padrones))
+            self.data.append((ruc, nombre,  fecha_in, fecha_in_act, estado_contri, condicion_contri, domicilio_fical, actividad_c_ex_fical, actividades_econ, emisor, afiliado, padrones))
         except TimeoutException:
             print('No se pudo cargar la información para el RUC', ruc)
             self.excepciones.append(ruc)
@@ -131,7 +132,6 @@ class Sunat_scraper:
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_argument(f"user-agent={headers['User-Agent']}")
         # chrome_options.add_argument("--headless")  # Opcional: para ejecución en segundo plano
-
         # Instanciar el controlador de Chrome y pasar las opciones como argumento
         selenium_service = Service(ChromeDriverManager().install())
         self.driver = webdriver.Chrome(service=selenium_service, options=chrome_options)
@@ -151,8 +151,8 @@ def leer_rucs_desde_excel(archivo_excel):
 archivo_excel = r"C:\Users\llore\Jupyter\Scrapers\Sunat\ruc_adjudicados.xlsx"
 
 
-# ruc_list = leer_rucs_desde_excel(archivo_excel) # EJECUCION COMPLETA
-ruc_list = ["20508626402", "20603469471"] # PRUEBAS
+ruc_list = leer_rucs_desde_excel(archivo_excel) # EJECUCION COMPLETA
+# ruc_list = ["20508626402", "20603469471"] # PRUEBAS
 
 if not ruc_list:
     print("No se encontraron RUCs en el archivo Excel.")

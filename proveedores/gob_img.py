@@ -12,7 +12,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
-import concurrent.futures
 
 from openpyxl import Workbook
 from openpyxl.drawing.image import Image
@@ -25,9 +24,7 @@ class Sunat_scraper:
         self.direct = direct
         chrome_options = webdriver.ChromeOptions()
         # chrome_options.add_argument("--headless")  # Opcional: para ejecución en segundo plano
-        chrome_options.add_argument("--start-maximized")
-
-
+        chrome_options.add_argument("--start-maximized") # maximar la web 
         # Instanciar el controlador de Chrome y pasar las opciones como argumento
         selenium_service = Service(ChromeDriverManager().install())
         # self.driver = webdriver.maximize_window()
@@ -46,11 +43,11 @@ class Sunat_scraper:
                                               'Sunat', 'SBS'])
         
         # Guardar el DataFrame en un archivo de Excel
-        excel_file = os.path.join(self.direct, 'gob_info_img_p.xlsx')
+        excel_file = os.path.join(self.direct, 'gob_info_img.xlsx')
+
         # Crear un nuevo libro de trabajo de openpyxl
         wb = Workbook()
         ws = wb.active
-        
         # Escribir los encabezados en la primera fila del archivo Excel
         ws.append(['Ruc', 'Proveedor', 'Teléfono', 'Domicilio', 
                 'Tipo de Contribuyente', 'Desempeño', 'Sanciones del TCE', 
@@ -108,15 +105,12 @@ class Sunat_scraper:
         self.driver.get("https://appsprep.osce.gob.pe:8143/perfilprov-ui/")
         self.driver.find_element(By.XPATH, '//*[@id="textBuscar"]').send_keys(ruc)
         self.driver.find_element(By.XPATH, '//*[@id="btnBuscar"]/i').click()
-
-        # Tu código restante permanece sin cambios
         try:
             # Hacer scroll hasta el final de la página
             self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
             
             # Esperar a que el botón de descarga esté disponible
-            boton_descarga = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="btnExcel"]')))
-            
+            boton_descarga = WebDriverWait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="btnExcel"]'))) # //*[@id="btnExcel"]
             # Hacer clic en el botón para iniciar la descarga
             boton_descarga.click()
 
@@ -136,21 +130,17 @@ class Sunat_scraper:
         except TimeoutException:
             print("Proveedores no encontrado")
 
-
-
-
         try:
             boton = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[3]/span[1]/i')))
             boton.click()
         except TimeoutException:
             print("Button no encontrado")
 
-
-
             
         try:
             time.sleep(5)
             WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div')))
+
             # Encontrar el elemento que contiene la información que deseas
             proveedor_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[1]/div[2]/div/div[1]')
             proveedor = proveedor_element.text.strip()
