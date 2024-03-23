@@ -41,13 +41,13 @@ class Sunat_scraper:
                                                'Afiliado al PLE desde', 'Padrones'])
         
         # Guardar el DataFrame en un archivo de Excel
-        excel_file = os.path.join(self.direct, 'sunat_info.xlsx')
+        excel_file = os.path.join(self.direct, 'sunat_info_completo.xlsx')
         df.to_excel(excel_file, index=False, index_label=False)
         print("Información exportada a", excel_file)
 
         if self.excepciones:
             excepciones_df = pd.DataFrame(self.excepciones, columns=['RUC'])
-            excepciones_excel_file = os.path.join(self.direct, 'ruc_excepciones.xlsx')
+            excepciones_excel_file = os.path.join(self.direct, 'ruc_excepciones_completos.xlsx')
             excepciones_df.to_excel(excepciones_excel_file, index=False)
             print("Lista de RUCs con excepciones guardada en", excepciones_excel_file) 
 
@@ -148,7 +148,7 @@ def leer_rucs_desde_excel(archivo_excel):
         print("Error al leer el archivo Excel:", e)
         return []
     
-archivo_excel = r"C:\Users\llore\Jupyter\Scrapers\Sunat\ruc_adjudicados.xlsx"
+archivo_excel = r"C:\Users\llore\Jupyter\Scrapers\Sunat\ruc_adjudicados_completos.xlsx"
 
 
 ruc_list = leer_rucs_desde_excel(archivo_excel) # EJECUCION COMPLETA

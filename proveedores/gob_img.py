@@ -249,8 +249,8 @@ def leer_rucs_desde_excel(archivo_excel):
 archivo_excel = r"C:\Users\llore\Jupyter\Scrapers\Sunat\ruc_adjudicados.xlsx"
 
 # Lista de RUCs a procesar
-ruc_list = ["20508626402", "20603469471", "20552976810"]  # PRUEBAS
-# ruc_list = leer_rucs_desde_excel(archivo_excel)
+# ruc_list = ["20508626402", "20603469471", "20552976810"]  # PRUEBAS
+ruc_list = leer_rucs_desde_excel(archivo_excel)
 
 if not ruc_list:
     print("No se encontraron RUCs en el archivo Excel.")
