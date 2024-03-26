@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Leer el archivo Excel
-df = pd.read_excel(r'C:\Users\llore\Jupyter\Scrapers\Sunat\ruc_adjudicados_completos.xlsx')
+df = pd.read_excel(r'C:\Users\llore\Jupyter\Scrapers\Sunat\ruc_adjudicados_v2.xlsx')
 
 # Obtener el número total de filas
 total_filas = len(df)

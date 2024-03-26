@@ -43,7 +43,7 @@ class Sunat_scraper:
                                               'Sunat', 'SBS'])
         
         # Guardar el DataFrame en un archivo de Excel
-        excel_file = os.path.join(self.direct, 'gob_info_img.xlsx')
+        excel_file = os.path.join(self.direct, 'gob_info_img_parte_3.xlsx')
 
         # Crear un nuevo libro de trabajo de openpyxl
         wb = Workbook()
@@ -75,7 +75,7 @@ class Sunat_scraper:
 
     def descargar_archivo(self, origen, destino):
         # Esperar a que el archivo se descargue completamente
-        tiempo_espera = 10  # Tiempo de espera máximo en segundos
+        tiempo_espera = 3  # Tiempo de espera máximo en segundos
         tiempo_inicio = time.time()
         while not os.path.exists(origen):
             if time.time() - tiempo_inicio > tiempo_espera:
@@ -124,116 +124,120 @@ class Sunat_scraper:
             print("Botón de descarga no encontrado")
                         
 
-        try:
-            boton = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="idPanelA2"]/div[2]/div/app-tile/a/div/div[1]')))
-            boton.click()
-        except TimeoutException:
-            print("Proveedores no encontrado")
+        # try:
+        #     boton = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="idPanelA2"]/div[2]/div/app-tile/a/div/div[1]')))
+        #     boton.click()
+        # except TimeoutException:
+        #     print("Proveedores no encontrado")
 
-        try:
-            boton = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[3]/span[1]/i')))
-            boton.click()
-        except TimeoutException:
-            print("Button no encontrado")
+        # try:
+        #     boton = WebDriverWait(self.driver, 30).until(EC.element_to_be_clickable((By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[3]/span[1]/i')))
+        #     boton.click()
+        # except TimeoutException:
+        #     print("Button no encontrado")
 
             
-        try:
-            time.sleep(5)
-            WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div')))
+        # try:
+        #     time.sleep(5)
+        #     WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div')))
 
-            # Encontrar el elemento que contiene la información que deseas
-            proveedor_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[1]/div[2]/div/div[1]')
-            proveedor = proveedor_element.text.strip()
+        #     # Encontrar el elemento que contiene la información que deseas
+        #     try:
+        #         proveedor_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[1]/div[2]/div/div[1]')
+        #         proveedor = proveedor_element.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el proveedor para el RUC", ruc)
+        #         proveedor = ''
 
 
-            try:
-                telefono_elemnt = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[2]/div/span[3]')
-                telefono = telefono_elemnt.text.strip()
-            except NoSuchElementException:
-                print("No se encontró el telefono para el RUC", ruc)
-                telefono = ''
+        #     try:
+        #         telefono_elemnt = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[2]/div/span[3]')
+        #         telefono = telefono_elemnt.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el telefono para el RUC", ruc)
+        #         telefono = ''
 
-            try:
-                domicilio_elemnt = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[2]/ul[2]/li[1]/div/span[3]')
-                domicilio = domicilio_elemnt.text.strip()
-            except NoSuchElementException:
-                print("No se encontró el telefono para el RUC", ruc)
-                domicilio = ''
+        #     try:
+        #         domicilio_elemnt = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[2]/ul[2]/li[1]/div/span[3]')
+        #         domicilio = domicilio_elemnt.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el telefono para el RUC", ruc)
+        #         domicilio = ''
 
-            try:
-                desem_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[1]/div[2]/div/div/div/span/img')
-                desempeno_url = desem_element.get_attribute("src")
-                image_data = requests.get(desempeno_url).content
-                image_filename = "../imgs/desempeno_image_{}.png".format(ruc) 
-                with open(image_filename, "wb") as f:
-                    f.write(image_data)
-                print("La imagen de desempeño se ha descargado correctamente.")
-            except NoSuchElementException:
-                print("No se encontró la imagen de desempeño para el RUC", ruc)
-                image_filename = ''
+        #     try:
+        #         desem_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[1]/div[2]/div/div/div/span/img')
+        #         desempeno_url = desem_element.get_attribute("src")
+        #         image_data = requests.get(desempeno_url).content
+        #         image_filename = "../imgs/desempeno_image_{}.png".format(ruc) 
+        #         with open(image_filename, "wb") as f:
+        #             f.write(image_data)
+        #         print("La imagen de desempeño se ha descargado correctamente.")
+        #     except NoSuchElementException:
+        #         print("No se encontró la imagen de desempeño para el RUC", ruc)
+        #         image_filename = ''
 
-            try:
-                tipo_contri_elemnt = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[2]/ul[2]/li[4]/div/span[3]')
-                tipo_contri = tipo_contri_elemnt.text.strip()
-            except NoSuchElementException:
-                print("No se encontró el sunat para el RUC", ruc)
-                tipo_contri = ''
+        #     try:
+        #         tipo_contri_elemnt = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[2]/div[1]/div[2]/ul[2]/li[4]/div/span[3]')
+        #         tipo_contri = tipo_contri_elemnt.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el sunat para el RUC", ruc)
+        #         tipo_contri = ''
 
-            # WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div')))
-            try:
-                sanciones_elemnt = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[1]/a/span[1]')
-                sanciones = sanciones_elemnt.text.strip()
-            except NoSuchElementException:
-                print("No se encontró el sunat para el RUC", ruc)
-                sanciones = ''
+        #     # WebDriverWait(self.driver, 30).until(EC.presence_of_element_located((By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div')))
+        #     try:
+        #         sanciones_elemnt = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[1]/a/span[1]')
+        #         sanciones = sanciones_elemnt.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el sunat para el RUC", ruc)
+        #         sanciones = ''
 
-            try:
-                penalidades_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[2]/a/span[1]')
-                penalidades = penalidades_element.text.strip()
-            except NoSuchElementException:
-                print("No se encontró el sunat para el RUC", ruc)
-                penalidades = ''
+        #     try:
+        #         penalidades_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[2]/a/span[1]')
+        #         penalidades = penalidades_element.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el sunat para el RUC", ruc)
+        #         penalidades = ''
 
-            try:
-                inabil_mand_jud_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[3]/a/span[1]')
-                inabilitado_fudicial = inabil_mand_jud_element.text.strip()
-            except NoSuchElementException:
-                print("No se encontró el sunat para el RUC", ruc)
-                inabilitado_fudicial = ''
+        #     try:
+        #         inabil_mand_jud_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[3]/a/span[1]')
+        #         inabilitado_fudicial = inabil_mand_jud_element.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el sunat para el RUC", ruc)
+        #         inabilitado_fudicial = ''
 
-            try:
-                inabil_admi_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[4]/a/span[1]')
-                inabilitado_admin = inabil_admi_element.text.strip()
-            except NoSuchElementException:
-                print("No se encontró el sunat para el RUC", ruc)
-                inabilitado_admin = ''
+        #     try:
+        #         inabil_admi_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[4]/a/span[1]')
+        #         inabilitado_admin = inabil_admi_element.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el sunat para el RUC", ruc)
+        #         inabilitado_admin = ''
 
-            try:
-                sunat_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[5]/a/span[1]')
-                sunat = sunat_element.text.strip()
-            except NoSuchElementException:
-                print("No se encontró el sunat para el RUC", ruc)
-                sunat = ''
+        #     try:
+        #         sunat_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[5]/a/span[1]')
+        #         sunat = sunat_element.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el sunat para el RUC", ruc)
+        #         sunat = ''
             
             
-            try:
-                sbs_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[6]/a/span[1]')
-                sbs = sbs_element.text.strip()
-            except NoSuchElementException:
-                print("No se encontró el sunat para el RUC", ruc)
-                sbs = ''
+        #     try:
+        #         sbs_element = self.driver.find_element(By.XPATH, '/html/body/app-root/div/div/app-prov-ficha/div/div/div[1]/div[3]/div/div[2]/div[6]/a/span[1]')
+        #         sbs = sbs_element.text.strip()
+        #     except NoSuchElementException:
+        #         print("No se encontró el sunat para el RUC", ruc)
+        #         sbs = ''
 
 
 
-            print('Información obtenida para el RUC', ruc, ':', proveedor,  )
-            # Agregar la información al diccionario
-            self.data.append((ruc, proveedor, telefono, domicilio, tipo_contri,  image_filename, sanciones, penalidades, inabilitado_fudicial, inabilitado_admin,  sunat, sbs)) #   
+        #     print('Información obtenida para el RUC', ruc, ':', proveedor,  )
+        #     # Agregar la información al diccionario
+        #     self.data.append((ruc, proveedor, telefono, domicilio, tipo_contri,  image_filename, sanciones, penalidades, inabilitado_fudicial, inabilitado_admin,  sunat, sbs)) #   
         except TimeoutException:
             print('No se pudo cargar la información para el RUC', ruc)
 
 
         # Espera unos segundos antes de continuar con el siguiente RUC
-        time.sleep(5)
+        time.sleep(3)
 
 # Función para leer los RUCs desde un archivo Excel
 def leer_rucs_desde_excel(archivo_excel):
@@ -246,7 +250,7 @@ def leer_rucs_desde_excel(archivo_excel):
         print("Error al leer el archivo Excel:", e)
         return []
     
-archivo_excel = r"C:\Users\llore\Jupyter\Scrapers\Sunat\ruc_adjudicados.xlsx"
+archivo_excel = r"C:\Users\llore\Jupyter\Scrapers\Sunat\data\data_preparation\ruc_parte_3.xlsx"
 
 # Lista de RUCs a procesar
 # ruc_list = ["20508626402", "20603469471", "20552976810"]  # PRUEBAS
